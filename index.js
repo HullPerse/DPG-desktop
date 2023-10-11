@@ -26,7 +26,7 @@ app.whenReady().then(() => {
         webviewTag: true
       }
     });
-    win.loadURL(`https://26.74.125.39:3000/`);
+    win.loadURL(`https:/localhost:3000/`);
     
     win.once('ready-to-show', () => {
       loadingWin.destroy();
