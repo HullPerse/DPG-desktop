@@ -11,7 +11,6 @@ app.whenReady().then(() => {
       nodeIntegration: true
     }
   });
-
   loadingWin.loadFile('loading.html');
 
   setTimeout(() => {
@@ -26,11 +25,14 @@ app.whenReady().then(() => {
         webviewTag: true
       }
     });
-    win.loadURL(`https:/localhost:3000/`);
+    win.loadURL(`http://26.74.125.39:3000`);
+    win.setBackgroundColor("#17191a");
+    win.reload();
     
     win.once('ready-to-show', () => {
       loadingWin.destroy();
       win.show();
+      win.center();
     });
   }, 3000);
 
