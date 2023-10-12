@@ -20,6 +20,7 @@ app.whenReady().then(() => {
       autoHideMenuBar: true,
       spellcheck: true,
       hiddenInMissionControl: true,
+      icon: "dpg.ico",
       webPreferences: {
         nodeIntegration: true,
         webviewTag: true
