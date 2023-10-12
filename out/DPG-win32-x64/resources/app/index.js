@@ -29,6 +29,7 @@ app.whenReady().then(() => {
     win.loadURL(`http://localhost:3000`);
     win.setBackgroundColor("#17191a");
     win.reload();
+    win.icon = "dpg.ico";
     
     win.once('ready-to-show', () => {
       loadingWin.destroy();
