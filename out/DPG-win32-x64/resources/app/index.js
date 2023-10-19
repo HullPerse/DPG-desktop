@@ -1,12 +1,13 @@
-const { BrowserWindow, app } = require('electron');
+const { BrowserWindow, app, session } = require('electron');
 const DiscordRPC = require('discord-rpc');
+
+// const url = 'http://localhost:3000';
 
 // Initialize Discord RPC
 DiscordRPC.register('1164429222345965668'); // Replace 'your-client-id' with your actual Discord application's client ID
 const rpc = new DiscordRPC.Client({ transport: 'ipc' });
 
 app.whenReady().then(() => {
-  // Create a loading window
   const loadingWin = new BrowserWindow({
     width: 400,
     height: 400,
@@ -19,8 +20,10 @@ app.whenReady().then(() => {
   });
   loadingWin.loadFile('loading.html');
 
-  // Set up the Discord Rich Presence
-  rpc.login({ clientId: '1164429222345965668' }); // Replace 'your-client-id' with your actual Discord application's client ID
+  setInterval(setDiscordPresence, 5000);
+  clearInterval(setInterval(setDiscordPresence, 5000))
+
+  rpc.login({ clientId: '1164429222345965668' });
 
   setTimeout(() => {
     const win = new BrowserWindow({
@@ -35,7 +38,8 @@ app.whenReady().then(() => {
         webviewTag: true,
       },
     });
-    win.loadURL('http://localhost:3000'); // Note the 'http://' in the URL
+    win.loadURL('http://localhost:3000');
+    setDiscordPresence();
     win.setBackgroundColor('#17191a');
     win.reload();
     win.icon = 'dpg.ico';
@@ -45,17 +49,50 @@ app.whenReady().then(() => {
       win.show();
       win.center();
     });
-
-    // Set up Discord Rich Presence details
-    rpc.setActivity({
-      details: 'Username from cookies',
-      state: 'Страница: Page from cookies || Клетка: Cell from cookies',
-      largeImageText: 'DPG',
-      largeImageKey: 'dpg',
-    });
   }, 3000);
+
+  function setDiscordPresence() {
+    session.defaultSession.cookies
+      .get({ url: 'http://localhost:3000' })
+      .then((cookies) => {
+        const usernameCookie = cookies.find((cookie) => cookie.name == 'username');
+        const mapCellCookie = cookies.find((cookie) => cookie.name == 'mapCell');
+        const pageCookie = cookies.find((cookie) => cookie.name == 'page');
+  
+        let username = "Пользователь не авторизован";
+        let mapCell;
+        let page;
+  
+        rpc.setActivity({
+          details: username,
+          largeImageText: 'DPG',
+          largeImageKey: 'dpg',
+        });
+
+        if (usernameCookie && mapCellCookie && pageCookie) {
+          username = usernameCookie.value;
+          mapCell = "Клетка: " + mapCellCookie.value;
+          page = " || " + pageCookie.value;
+
+          rpc.setActivity({
+            details: username,
+            state: mapCell + page,
+            largeImageText: 'DPG',
+            largeImageKey: 'dpg',
+          });
+        }
+
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+
+  
 
   app.on('window-all-closed', () => {
     app.quit();
+    loadingWin.destroy();
+    rpc.clearActivity();
   });
 });
