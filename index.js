@@ -1,10 +1,7 @@
 const { BrowserWindow, app, session } = require('electron');
 const DiscordRPC = require('discord-rpc');
 
-// const url = 'http://localhost:3000';
-
-// Initialize Discord RPC
-DiscordRPC.register('1164429222345965668'); // Replace 'your-client-id' with your actual Discord application's client ID
+DiscordRPC.register('1164429222345965668');
 const rpc = new DiscordRPC.Client({ transport: 'ipc' });
 
 app.whenReady().then(() => {
@@ -87,8 +84,6 @@ app.whenReady().then(() => {
         console.error(error);
       });
   }
-
-  
 
   app.on('window-all-closed', () => {
     app.quit();
